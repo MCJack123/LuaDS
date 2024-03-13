@@ -253,6 +253,14 @@ function LinkedList:enumerate()
     return LLnext, {node = self._head}, 0
 end
 
+--- Returns an array with the elements in thelist.
+---@return any[] items The items in the list as an array
+function LinkedList:array()
+    local t = {}
+    for i, v in self:enumerate() do t[i] = v end
+    return t
+end
+
 function LinkedList_mt.__concat(a, b)
     expect(1, a, "table")
     expect(2, b, "table")

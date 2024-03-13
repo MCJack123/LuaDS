@@ -77,6 +77,10 @@ function List:compactMap(fn) end
 ---@return number 0
 function List:enumerate() end
 
+--- Returns an array with the elements in the list.
+---@return any[] items The items in the list as an array
+function List:array() end
+
 ---@class ListType
 local ListType = {}
 

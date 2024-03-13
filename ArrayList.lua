@@ -20,7 +20,7 @@ function ArrayList:new(arr, count)
     end
     expect(1, arr, "table", "nil")
     local obj = setmetatable(arr or {}, ArrayList_mt)
-    obj._n = count or #obj
+    rawset(obj, "_n", count or (arr and #arr or 0))
     return obj
 end
 
@@ -186,6 +186,14 @@ end
 ---@return number 0
 function ArrayList:enumerate()
     return ALnext, self, 0
+end
+
+--- Returns an array with the elements in the list.
+---@return any[] items The items in the list as an array
+function ArrayList:array()
+    local t = {}
+    for i, v in self:enumerate() do t[i] = v end
+    return t
 end
 
 function ArrayList_mt.__concat(a, b)
