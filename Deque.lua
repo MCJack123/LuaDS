@@ -41,13 +41,13 @@ end
 --- Returns the item at the front of the list, or nil if the list is empty.
 ---@return any front The front item
 function Deque:front()
-    return self[self._start+1]
+    return rawget(self, self._start+1)
 end
 
 --- Returns the item at the back of the list, or nil if the list is empty.
 ---@return any back The back item
 function Deque:back()
-    return self[self._start+self._n]
+    return rawget(self, self._start+self._n)
 end
 
 --- Appends an item at the back of the list.
@@ -61,8 +61,8 @@ end
 ---@return any|nil back The back item which was removed
 function Deque:pop()
     if self._n == 0 then return nil end
-    local v = self[self._start+self._n]
-    self[self._start+self._n] = nil
+    local v = rawget(self, self._start+self._n)
+    rawset(self, self._start+self._n, nil)
     self._n = self._n - 1
     return v
 end
@@ -76,15 +76,17 @@ function Deque:insert(val, idx)
     if idx < 1 or idx > self._n + 1 then
         error("bad argument #2 (index out of range)", 2)
     end
-    if idx == 1 then
-        rawset(self, self._start, val)
+    if idx < self._n / 2 then
+        for i = self._start+1, self._start+idx-1 do
+            rawset(self, i-1, rawget(self, i))
+        end
         self._start = self._start - 1
     else
         for i = self._start+self._n, self._start+idx, -1 do
-            rawset(self, i+1, self[i])
+            rawset(self, i+1, rawget(self, i))
         end
-        rawset(self, self._start+idx, val)
     end
+    rawset(self, self._start+idx, val)
     self._n = self._n + 1
 end
 
@@ -97,9 +99,16 @@ function Deque:remove(idx)
     if idx < 1 or idx > self._n then
         error("bad argument #1 (index out of range)", 2)
     end
-    local v = self[self._start+idx]
-    for i = self._start+self._n, self._start+idx, -1 do
-        self[i] = self[i + 1]
+    local v = rawget(self, self._start+idx)
+    if idx < self._n / 2 then
+        for i = self._start+idx, self._start+1, -1 do
+            rawset(self, i, rawget(self, i - 1))
+        end
+        self._start = self._start + 1
+    else
+        for i = self._start+idx, self._start+self._n do
+            rawset(self, i, rawget(self, i + 1))
+        end
     end
     self._n = self._n - 1
     return v
@@ -110,7 +119,7 @@ end
 ---@return number|nil index The index of the item, or nil if not present
 function Deque:find(val)
     for i = self._start+1, self._start+self._n do
-        if self[i] == val then
+        if rawget(self, i) == val then
             return i
         end
     end
@@ -130,7 +139,7 @@ function Deque:removeItem(val, count)
     local i = 1
     local n = 0
     while i <= self._n do
-        if self[self._start+i] == val then
+        if rawget(self, self._start+i) == val then
             self:remove(i)
             n = n + 1
             if count and n == count then return n end
@@ -146,8 +155,8 @@ function Deque:filter(fn)
     expect(1, fn, "function")
     local retval = Deque:new()
     for i = self._start+1, self._start+self._n do
-        if fn(self[i]) then
-            retval:append(self[i])
+        if fn(rawget(self, i)) then
+            retval:append(rawget(self, i))
         end
     end
     return retval
@@ -160,7 +169,7 @@ function Deque:map(fn)
     expect(1, fn, "function")
     local retval = {}
     for i = self._start+1, self._start+self._n do
-        retval[i] = fn(self[i])
+        retval[i] = fn(rawget(self, i))
     end
     return Deque:new(retval)
 end
@@ -172,9 +181,9 @@ function Deque:compactMap(fn)
     expect(1, fn, "function")
     local retval = Deque:new()
     for i = self._start+1, self._start+self._n do
-        local v = fn(self[i])
+        local v = fn(rawget(self, i))
         if v ~= nil then
-            retval:append(self[i])
+            retval:append(rawget(self, i))
         end
     end
     return retval
@@ -183,7 +192,7 @@ end
 local function DQnext(self, i)
     i = i + 1
     if i <= self._n then
-        return i, self[self._start+i]
+        return i, rawget(self, self._start+i)
     end
 end
 
@@ -208,11 +217,18 @@ function Deque_mt:__len()
     return self._n
 end
 
+function Deque_mt:__index(idx)
+    if Deque[idx] then return Deque[idx] end
+    idx = math.floor(idx)
+    if idx < 1 or idx > self._n then error("index out of range", 2) end
+    return rawget(self, self._start+idx)
+end
+
 function Deque_mt:__newindex(idx, val)
     expect(1, idx, "number")
     idx = math.floor(idx)
     if idx < 1 or idx > self._n then error("index out of range", 2) end
-    return rawset(self, idx, val)
+    return rawset(self, self._start+idx, val)
 end
 
 return Deque
