@@ -3,14 +3,14 @@ local expect = require "expect"
 ---@class Queue
 ---@field private _list List
 local Queue = {}
-local Queue_mt = {__index = Queue}
+Queue.__mt = {__name = "Queue", __index = Queue}
 
 --- Creates a new queue with the specified backing list type.
 ---@param List ListType The type of list to use to store data
 ---@return Queue queue A new Queue
 function Queue:new(List)
     expect(1, List, "table")
-    return setmetatable({_list = List:new()}, Queue_mt)
+    return setmetatable({_list = List:new()}, self.__mt)
 end
 
 --- Returns whether the queue is empty.
@@ -48,6 +48,10 @@ end
 function Queue:pop()
     if self._list:isEmpty() then return nil end
     return self._list:remove(1)
+end
+
+function Queue.__mt:__len()
+    return self._list:length()
 end
 
 return Queue

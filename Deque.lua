@@ -6,11 +6,14 @@ local expect = require "expect"
 ---@operator concat(Deque):Deque
 ---@operator len():number
 local Deque = {}
-local Deque_mt = {}
+Deque.__mt = {__name = "Deque"}
 
 --- Creates a new Deque.
----@param arr table|any|nil An array with preset values, or if count is provided, a value to repeat
----@param count number|nil If specified, fill the list with arr repeated this many times
+---@overload fun(): Deque
+---@overload fun(arr: table): Deque
+---@overload fun(val: any, count: number): Deque
+---@param arr? table|any An array with preset values, or if count is provided, a value to repeat
+---@param count? number If specified, fill the list with arr repeated this many times
 ---@return Deque list The new Deque
 function Deque:new(arr, count)
     if count then
@@ -20,7 +23,7 @@ function Deque:new(arr, count)
         arr = a
     end
     expect(1, arr, "table", "nil")
-    return setmetatable({_items = arr or {}, _n = count or (arr and #arr or 0), _start = 0}, Deque_mt)
+    return setmetatable({_items = arr or {}, _n = count or (arr and #arr or 0), _start = 0}, self.__mt)
 end
 
 --- Returns whether the list is empty.
@@ -125,7 +128,7 @@ end
 
 --- Removes a number of instances of the specified item from the list.
 ---@param val any The value to remove
----@param count number|nil The number of items to remove (defaults to all)
+---@param count? number The number of items to remove (defaults to all)
 ---@return number itemsRemoved The number of items removed
 function Deque:removeItem(val, count)
     expect(2, count, "number", "nil")
@@ -209,7 +212,7 @@ function Deque:array()
     return t
 end
 
-function Deque_mt.__concat(a, b)
+function Deque.__mt.__concat(a, b)
     expect(1, a, "table")
     expect(2, b, "table")
     local retval = Deque:new()
@@ -218,11 +221,19 @@ function Deque_mt.__concat(a, b)
     return retval
 end
 
-function Deque_mt:__len()
+function Deque.__mt:eq(other)
+    if self._n ~= other._n then return false end
+    for i = 1, self._n do
+        if self._items[self._start+i] ~= other._items[other._start+i] then return false end
+    end
+    return true
+end
+
+function Deque.__mt:__len()
     return self._n
 end
 
-function Deque_mt:__index(idx)
+function Deque.__mt:__index(idx)
     if Deque[idx] then return Deque[idx] end
     expect(1, idx, "number")
     idx = math.floor(idx)
@@ -230,11 +241,15 @@ function Deque_mt:__index(idx)
     return self._items[self._start+idx]
 end
 
-function Deque_mt:__newindex(idx, val)
+function Deque.__mt:__newindex(idx, val)
     expect(1, idx, "number")
     idx = math.floor(idx)
     if idx < 1 or idx > self._n then error("index out of range", 2) end
     self._items[self._start+idx] = val
+end
+
+function Deque.__mt:__pairs()
+    return self:enumerate()
 end
 
 return Deque

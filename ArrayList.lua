@@ -5,11 +5,14 @@ local expect = require "expect"
 ---@operator concat(ArrayList):ArrayList
 ---@operator len():number
 local ArrayList = {}
-local ArrayList_mt = {__index = ArrayList}
+ArrayList.__mt = {__name = "ArrayList", __index = ArrayList}
 
 --- Creates a new ArrayList.
----@param arr table|any|nil An array with preset values, or if count is provided, a value to repeat
----@param count number|nil If specified, fill the list with arr repeated this many times
+---@overload fun(): ArrayList
+---@overload fun(arr: table): ArrayList
+---@overload fun(val: any, count: number): ArrayList
+---@param arr? table|any An array with preset values, or if count is provided, a value to repeat
+---@param count? number If specified, fill the list with arr repeated this many times
 ---@return ArrayList list The new ArrayList
 function ArrayList:new(arr, count)
     if count then
@@ -19,7 +22,7 @@ function ArrayList:new(arr, count)
         arr = a
     end
     expect(1, arr, "table", "nil")
-    local obj = setmetatable(arr or {}, ArrayList_mt)
+    local obj = setmetatable(arr or {}, self.__mt)
     rawset(obj, "_n", count or (arr and #arr or 0))
     return obj
 end
@@ -112,7 +115,7 @@ end
 
 --- Removes a number of instances of the specified item from the list.
 ---@param val any The value to remove
----@param count number|nil The number of items to remove (defaults to all)
+---@param count? number The number of items to remove (defaults to all)
 ---@return number itemsRemoved The number of items removed
 function ArrayList:removeItem(val, count)
     expect(2, count, "number", "nil")
@@ -196,7 +199,7 @@ function ArrayList:array()
     return t
 end
 
-function ArrayList_mt.__concat(a, b)
+function ArrayList.__mt.__concat(a, b)
     expect(1, a, "table")
     expect(2, b, "table")
     local retval = ArrayList:new()
@@ -205,15 +208,27 @@ function ArrayList_mt.__concat(a, b)
     return retval
 end
 
-function ArrayList_mt:__len()
+function ArrayList.__mt:__eq(other)
+    if self._n ~= other._n then return false end
+    for i = 1, self._n do
+        if self[i] ~= other[i] then return false end
+    end
+    return true
+end
+
+function ArrayList.__mt:__len()
     return self._n
 end
 
-function ArrayList_mt:__newindex(idx, val)
+function ArrayList.__mt:__newindex(idx, val)
     expect(1, idx, "number")
     idx = math.floor(idx)
     if idx < 1 or idx > self._n then error("index out of range", 2) end
     return rawset(self, idx, val)
+end
+
+function ArrayList.__mt:__pairs()
+    return self:enumerate()
 end
 
 return ArrayList

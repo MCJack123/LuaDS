@@ -12,14 +12,17 @@ local expect = require "expect"
 ---@operator concat(LinkedList):LinkedList
 ---@operator len():number
 local LinkedList = {}
-local LinkedList_mt = {}
+LinkedList.__mt = {__name = "LinkedList"}
 
 --- Creates a new LinkedList.
----@param arr table|any|nil An array with preset values, or if count is provided, a value to repeat
----@param count number|nil If specified, fill the list with arr repeated this many times
+---@overload fun(): LinkedList
+---@overload fun(arr: table): LinkedList
+---@overload fun(val: any, count: number): LinkedList
+---@param arr? table|any An array with preset values, or if count is provided, a value to repeat
+---@param count? number If specified, fill the list with arr repeated this many times
 ---@return LinkedList list The new LinkedList
 function LinkedList:new(arr, count)
-    local obj = setmetatable({_n = 0}, LinkedList_mt)
+    local obj = setmetatable({_n = 0}, self.__mt)
     if count then
         expect(2, count, "number")
         if count < 0 then return obj end
@@ -159,7 +162,7 @@ end
 
 --- Removes a number of instances of the specified item from the list.
 ---@param val any The value to remove
----@param count number|nil The number of items to remove (defaults to all)
+---@param count? number The number of items to remove (defaults to all)
 ---@return number itemsRemoved The number of items removed
 function LinkedList:removeItem(val, count)
     expect(2, count, "number", "nil")
@@ -261,7 +264,7 @@ function LinkedList:array()
     return t
 end
 
-function LinkedList_mt.__concat(a, b)
+function LinkedList.__mt.__concat(a, b)
     expect(1, a, "table")
     expect(2, b, "table")
     local retval = LinkedList:new()
@@ -270,11 +273,21 @@ function LinkedList_mt.__concat(a, b)
     return retval
 end
 
-function LinkedList_mt:__len()
+function LinkedList.__mt:__eq(other)
+    if self._n ~= other._n then return false end
+    local an, bn = self.head, other.head
+    while an ~= nil do
+        if an.value ~= bn.value then return false end
+        an, bn = an.next, bn.next
+    end
+    return true
+end
+
+function LinkedList.__mt:__len()
     return self._n
 end
 
-function LinkedList_mt:__index(idx)
+function LinkedList.__mt:__index(idx)
     if LinkedList[idx] then return LinkedList[idx] end
     expect(1, idx, "number")
     idx = math.floor(idx)
@@ -284,7 +297,7 @@ function LinkedList_mt:__index(idx)
     return node.value
 end
 
-function LinkedList_mt:__newindex(idx, val)
+function LinkedList.__mt:__newindex(idx, val)
     if idx == "_head" or idx == "_tail" then return rawset(self, idx, val) end
     expect(1, idx, "number")
     idx = math.floor(idx)
@@ -292,6 +305,10 @@ function LinkedList_mt:__newindex(idx, val)
     local node = self._head
     for _ = 2, idx do node = node.next end
     node.value = val
+end
+
+function LinkedList.__mt:__pairs()
+    return self:enumerate()
 end
 
 return LinkedList

@@ -3,14 +3,14 @@ local expect = require "expect"
 ---@class Stack
 ---@field private _list List
 local Stack = {}
-local Stack_mt = {__index = Stack}
+Stack.__mt = {__name = "Stack", __index = Stack}
 
 --- Creates a new stack with the specified backing list type.
 ---@param List ListType The type of list to use to store data
 ---@return Stack stack A new Stack
 function Stack:new(List)
     expect(1, List, "table")
-    return setmetatable({_list = List:new()}, Stack_mt)
+    return setmetatable({_list = List:new()}, self.__mt)
 end
 
 --- Returns whether the stack is empty.
@@ -41,6 +41,10 @@ end
 ---@return any|nil top The item removed
 function Stack:pop()
     return self._list:pop()
+end
+
+function Stack.__mt:__len()
+    return self._list:length()
 end
 
 return Stack
