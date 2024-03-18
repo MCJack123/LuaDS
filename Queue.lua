@@ -27,13 +27,13 @@ function Queue:length()
 end
 
 --- Returns the item at the front of the queue.
----@return any top The item at the front of the queue, or nil if the queue is empty
+---@return any front The item at the front of the queue, or nil if the queue is empty
 function Queue:front()
     return self._list:front()
 end
 
 --- Returns the item at the back of the queue.
----@return any top The item at the back of the queue, or nil if the queue is empty
+---@return any back The item at the back of the queue, or nil if the queue is empty
 function Queue:back()
     return self._list:back()
 end
@@ -45,7 +45,7 @@ function Queue:push(val)
 end
 
 --- Removes and returns the item at the front of the queue. Returns nil if the queue is empty.
----@return any|nil top The item removed
+---@return any|nil front The item removed
 function Queue:pop()
     if self._list:isEmpty() then return nil end
     return self._list:remove(1)
