@@ -6,7 +6,7 @@ local BST = require "BST"
 local AVLTree = setmetatable({}, {__index = BST})
 AVLTree.__mt = {__name = "AVLTree", __index = AVLTree}
 
---- Creates a new AVL tree, optionally from a sorted list of values.
+--- Creates a new AVL tree, optionally from a sorted list of values. (O(1) or O(n))
 ---@param values? List|table A list of items to insert into the tree - must be sorted!
 ---@param i? number The index in the list to start at (defaults to 1)
 ---@param j? number The index in the list to stop at (defaults to #values)
@@ -17,14 +17,14 @@ function AVLTree:new(values, i, j)
     return obj
 end
 
---- Inserts a new item into the AVL tree.
+--- Inserts a new item into the AVL tree. (O(log n))
 ---@param val Comparable The value to add
 function AVLTree:insert(val)
     BST.insert(self, val)
     self:rebalance()
 end
 
---- Removes an item from the AVL tree.
+--- Removes an item from the AVL tree. (O(log n))
 ---@param val Comparable The value to remove
 function AVLTree:remove(val)
     BST.remove(self, val)

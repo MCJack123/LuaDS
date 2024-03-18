@@ -10,7 +10,7 @@ local expect = require "expect"
 local ListMap = {}
 ListMap.__mt = {__name = "ListMap"}
 
---- Creates a new list map.
+--- Creates a new list map. (O(1))
 ---@param tab? table A table of values to prefill the map with
 ---@return ListMap map The new map
 function ListMap:new(tab)
@@ -28,19 +28,19 @@ function ListMap:new(tab)
     return obj
 end
 
---- Returns whether the map is empty.
+--- Returns whether the map is empty. (O(1))
 ---@return boolean empty Whether the map is empty
 function ListMap:isEmpty()
     return self._len == 0
 end
 
---- Returns the number of items in the map.
+--- Returns the number of items in the map. (O(1))
 ---@return number length The number of items in the map
 function ListMap:length()
     return self._len
 end
 
---- Returns the value associated with a given key, or nil if not found.
+--- Returns the value associated with a given key, or nil if not found. (O(1))
 ---@param key any The key to check
 ---@return any|nil value The value associated with the key
 function ListMap:get(key)
@@ -49,7 +49,7 @@ function ListMap:get(key)
     return self._entries[i]
 end
 
---- Assigns a key to a value, inserting it if it doesn't exist, or replacing the value if it does.
+--- Assigns a key to a value, inserting it if it doesn't exist, or replacing the value if it does. (O(1) amortized)
 ---@param key any The key to assign to
 ---@param value any The value to assign
 function ListMap:set(key, value)
@@ -72,7 +72,7 @@ function ListMap:set(key, value)
     end
 end
 
---- Returns whether a given key exists in the map
+--- Returns whether a given key exists in the map. (O(1))
 ---@param key any The key to check
 ---@return boolean found Whether the key exists
 function ListMap:find(key)
@@ -88,14 +88,14 @@ local function LMnext(state, i)
     return state.self._keys[state.i], state.self._entries[state.i]
 end
 
---- Returns a key-value iterator function for a for loop.
+--- Returns a key-value iterator function for a for loop. (O(1))
 ---@return fun():any|nil,any|nil iter The iterator function
 ---@return table state The iterator state
 function ListMap:enumerate()
     return LMnext, {self = self, i = 0}
 end
 
---- Returns a normal table with the contents of the map.
+--- Returns a normal table with the contents of the map. (O(n))
 ---@return table table A table with the contents of the map
 function ListMap:table()
     local t = {}
@@ -105,7 +105,7 @@ function ListMap:table()
     return t
 end
 
---- Returns a list (optionally of a List type) with pairs of key-value entries.
+--- Returns a list (optionally of a List type) with pairs of key-value entries. (O(n))
 ---@param List? ListType The type of list to make (defaults to a normal table)
 ---@return table<{key:any,value:any}>|List pairs A list of key-value pairs in the table
 function ListMap:pairs(List)

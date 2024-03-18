@@ -11,7 +11,7 @@ local expect = require "expect"
 local BST = {}
 BST.__mt = {__name = "BST", __index = BST}
 
---- Creates a new binary search tree, optionally from a sorted list of values.
+--- Creates a new binary search tree, optionally from a sorted list of values. (O(1) or O(n))
 ---@param values? List|table A list of items to insert into the tree - must be sorted!
 ---@param i? number The index in the list to start at (defaults to 1)
 ---@param j? number The index in the list to stop at (defaults to #values)
@@ -39,20 +39,20 @@ function BST:new(values, i, j)
     return obj
 end
 
---- Returns whether the tree is empty.
+--- Returns whether the tree is empty. (O(1))
 ---@return boolean empty Whether the tree is empty
 function BST:isEmpty()
     return self.value == nil
 end
 
---- Returns the number of items in the tree.
+--- Returns the number of items in the tree. (O(n))
 ---@return number length The number of items in the tree
 function BST:length()
     if self.value == nil then return 0 end
     return (self.left and self.left:length() or 0) + (self.right and self.right:length() or 0) + 1
 end
 
---- Searches for the specified value in the tree.
+--- Searches for the specified value in the tree. (O(log n) average, O(n) worst)
 ---@param val Comparable The value to look for
 ---@return any|nil item The item that was found, or nil otherwise
 function BST:find(val)
@@ -63,7 +63,7 @@ function BST:find(val)
     else return nil end
 end
 
---- Inserts a new item into the binary search tree.
+--- Inserts a new item into the binary search tree. (O(log n) average, O(n) worst)
 ---@param val Comparable The value to add
 function BST:insert(val)
     if self.value == nil then
@@ -83,7 +83,7 @@ function BST:insert(val)
     else self.value = val end
 end
 
---- Removes an item from the binary search tree.
+--- Removes an item from the binary search tree. (O(log n) average, O(n) worst)
 ---@param val Comparable The value to remove
 function BST:remove(val)
     if self.value == nil then return
@@ -107,7 +107,7 @@ function BST:remove(val)
     elseif val > self.value and self.right then return self.right:remove(val) end
 end
 
---- Returns the height of the tree.
+--- Returns the height of the tree. (O(n))
 ---@return number height The height of the tree
 function BST:height()
     return math.max(self.left and self.left:height() + 1 or 0, self.right and self.right:height() + 1 or 0)
@@ -120,13 +120,13 @@ local function BSTiter(tree, n)
     return BSTiter(tree.right, n + 1)
 end
 
---- Iterates through the tree in order.
+--- Iterates through the tree in order. (O(1))
 ---@return fun(table,number):number,Comparable iter The iterator
 function BST:enumerate()
     return coroutine.wrap(function() BSTiter(self, 0) return nil end)
 end
 
---- Returns an array with the elements in the tree.
+--- Returns an array with the elements in the tree. (O(n))
 ---@return any[] items The items in the tree as an array
 function BST:array()
     local t = {}

@@ -5,7 +5,7 @@ local expect = require "expect"
 local Heap = {}
 Heap.__mt = {__name = "Heap", __index = Heap}
 
---- Creates a new min- or max-heap.
+--- Creates a new min- or max-heap. (O(1))
 ---@param max boolean Whether to create a min (false) or max (true) heap
 ---@return Heap heap A new Heap
 function Heap:new(max)
@@ -13,25 +13,25 @@ function Heap:new(max)
     return setmetatable({max = max}, self.__mt)
 end
 
---- Returns whether the heap is empty.
+--- Returns whether the heap is empty. (O(1))
 ---@return boolean empty Whether the heap is empty
 function Heap:isEmpty()
     return #self == 0
 end
 
---- Returns the length of the heap.
+--- Returns the length of the heap. (O(1))
 ---@return number length The length of the heap
 function Heap:length()
     return #self
 end
 
---- Returns the item at the top of the heap.
+--- Returns the item at the top of the heap. (O(1))
 ---@return Comparable|nil top The top of the heap, or nil if the heap is empty
 function Heap:front()
     return self[1]
 end
 
---- Inserts an item into the heap.
+--- Inserts an item into the heap. (O(1) average, O(log n) worst)
 ---@param val Comparable The value to insert
 function Heap:insert(val)
     expect(1, val, "number", "string", "table")
@@ -48,7 +48,7 @@ function Heap:insert(val)
     end
 end
 
---- Removes the top item from the heap, and returns it.
+--- Removes the top item from the heap, and returns it. (O(log n))
 ---@return Comparable|nil top The item previously at the top, or nil if the heap is empty
 function Heap:remove()
     local retval = self[1]

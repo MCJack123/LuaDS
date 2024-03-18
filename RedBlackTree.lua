@@ -10,7 +10,7 @@ local BST = require "BST"
 local RedBlackTree = setmetatable({}, {__index = BST})
 RedBlackTree.__mt = {__name = "RedBlackTree", __index = RedBlackTree}
 
---- Creates a new red-black tree, optionally from a list of values.
+--- Creates a new red-black tree, optionally from a list of values. (O(1), or O(n) amortized)
 ---@param values? List|table A list of items to insert into the tree
 ---@param i? number The index in the list to start at (defaults to 1)
 ---@param j? number The index in the list to stop at (defaults to #values)
@@ -27,7 +27,7 @@ function RedBlackTree:new(values, i, j)
     return obj
 end
 
---- Inserts a new item into the red-black tree.
+--- Inserts a new item into the red-black tree. (O(1) amortized, O(log n) worst)
 ---@param val Comparable The value to add
 function RedBlackTree:insert(val)
     if self.value == nil then
@@ -100,7 +100,7 @@ function RedBlackTree:prepareRemove()
     end
 end
 
---- Removes an item from the red-black tree.
+--- Removes an item from the red-black tree. (O(1) amortized, O(log n) worst)
 ---@param val Comparable The value to remove
 function RedBlackTree:remove(val)
     if self.value == nil then return

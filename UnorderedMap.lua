@@ -7,39 +7,42 @@ local expect = require "expect"
 local UnorderedMap = {}
 UnorderedMap.__mt = {__name = "UnorderedMap"}
 
---- Creates a new unordered map.
+--- Creates a new unordered map. (O(1) or O(n))
 ---@param tab? table A table of values to prefill the map with
 ---@return UnorderedMap map The new map
 function UnorderedMap:new(tab)
-    return setmetatable({_table = {}, _len = 0}, self.__mt)
+    expect(1, tab, "table", "nil")
+    local obj = setmetatable({_table = {}, _len = 0}, self.__mt)
+    if tab then for k, v in pairs(tab) do obj._table[k] = v end end
+    return obj
 end
 
---- Returns whether the map is empty.
+--- Returns whether the map is empty. (O(1))
 ---@return boolean empty Whether the map is empty
 function UnorderedMap:isEmpty()
     return self._len == 0
 end
 
---- Returns the number of items in the map.
+--- Returns the number of items in the map. (O(1))
 ---@return number length The number of items in the map
 function UnorderedMap:length()
     return self._len
 end
 
---- Returns the Lua-style length of the map.
+--- Returns the Lua-style length of the map. (O(log n) average, O(n) worst)
 ---@return number length The number of integer-keyed items in the map
 function UnorderedMap:ilen()
     return #self._table
 end
 
---- Returns the value associated with a given key, or nil if not found.
+--- Returns the value associated with a given key, or nil if not found. (O(1))
 ---@param key any The key to check
 ---@return any|nil value The value associated with the key
 function UnorderedMap:get(key)
     return self._table[key]
 end
 
---- Assigns a key to a value, inserting it if it doesn't exist, or replacing the value if it does.
+--- Assigns a key to a value, inserting it if it doesn't exist, or replacing the value if it does. (O(1))
 ---@param key any The key to assign to
 ---@param value any The value to assign
 function UnorderedMap:set(key, value)
@@ -51,21 +54,21 @@ function UnorderedMap:set(key, value)
     self._table[key] = value
 end
 
---- Returns whether a given key exists in the map
+--- Returns whether a given key exists in the map (O(1))
 ---@param key any The key to check
 ---@return boolean found Whether the key exists
 function UnorderedMap:find(key)
     return self._table[key] ~= nil
 end
 
---- Returns a key-value iterator function for a for loop.
+--- Returns a key-value iterator function for a for loop. (O(1))
 ---@return fun():any|nil,any|nil iter The iterator function
 ---@return table iter The iterator invariant
 function UnorderedMap:enumerate()
     return next, self._table
 end
 
---- Returns a normal table with the contents of the map.
+--- Returns a normal table with the contents of the map. (O(n))
 ---@return table table A table with the contents of the map
 function UnorderedMap:table()
     local t = {}
@@ -73,7 +76,7 @@ function UnorderedMap:table()
     return t
 end
 
---- Returns a list (optionally of a List type) with pairs of key-value entries.
+--- Returns a list (optionally of a List type) with pairs of key-value entries. (O(n))
 ---@param List? ListType The type of list to make (defaults to a normal table)
 ---@return table<{key:any,value:any}>|List pairs A list of key-value pairs in the table
 function UnorderedMap:pairs(List)

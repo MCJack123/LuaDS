@@ -13,39 +13,39 @@ PriorityQueue.__mt = {__name = "PriorityQueue", __index = PriorityQueue}
 local PriorityItem_mt = {__lt = function(a, b) return a.priority < b.priority end}
 local function PriorityItem(v, p) return setmetatable({value = v, priority = p}, PriorityItem_mt) end
 
---- Creates a new priority queue.
+--- Creates a new priority queue. (O(1))
 ---@return PriorityQueue queue A new PriorityQueue
 function PriorityQueue:new()
     return setmetatable({_heap = Heap:new(true)}, self.__mt)
 end
 
---- Returns whether the queue is empty.
+--- Returns whether the queue is empty. (O(1))
 ---@return boolean empty Whether the queue is empty
 function PriorityQueue:isEmpty()
     return self._heap:isEmpty()
 end
 
---- Returns the number of items in the queue.
+--- Returns the number of items in the queue. (O(1))
 ---@return number length The number of items in the queue
 function PriorityQueue:length()
     return self._heap:length()
 end
 
---- Returns the item at the front of the queue.
+--- Returns the item at the front of the queue. (O(1))
 ---@return any front The item at the front of the queue, or nil if the queue is empty
 function PriorityQueue:front()
     if self._heap:isEmpty() then return nil end
     return self._heap:front().value
 end
 
---- Returns an item near the back of the queue. This is not guaranteed to be the lowest priority item!
+--- Returns an item near the back of the queue. This is not guaranteed to be the lowest priority item! (O(1))
 ---@return any back The item at the "back" of the queue, or nil if the queue is empty
 function PriorityQueue:back()
     if self._heap:isEmpty() then return nil end
     return self._heap[#self._heap].value
 end
 
---- Adds an item to the queue. Higher priority items will be pushed further forward than lower priority items.
+--- Adds an item to the queue. Higher priority items will be pushed further forward than lower priority items. (O(1) average, O(log n) worst)
 ---@param val any The value to add
 ---@param priority? number The priority of the item (defaults to `val` if the item is comparable)
 function PriorityQueue:push(val, priority)
@@ -54,7 +54,7 @@ function PriorityQueue:push(val, priority)
     return self._heap:insert(PriorityItem(val, priority))
 end
 
---- Removes and returns the item at the front of the queue. Returns nil if the queue is empty.
+--- Removes and returns the item at the front of the queue. Returns nil if the queue is empty. (O(log n))
 ---@return any|nil top The item removed
 ---@return number|nil priority The priority of the item
 function PriorityQueue:pop()

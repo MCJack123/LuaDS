@@ -6,7 +6,7 @@ local expect = require "expect"
 local Trie = {}
 Trie.__mt = {__name = "Trie", __index = Trie}
 
---- Creates a new trie.
+--- Creates a new trie. (O(1))
 ---@param c? string The character to assign as a byte
 ---@return Trie trie The new trie
 function Trie:new(c)
@@ -14,7 +14,7 @@ function Trie:new(c)
     return setmetatable({character = c, children = {}}, self.__mt)
 end
 
---- Inserts a string into the trie.
+--- Inserts a string into the trie. (O(#str))
 ---@param str string The string to add
 function Trie:insert(str)
     expect(1, str, "string")
@@ -23,7 +23,7 @@ function Trie:insert(str)
     if b then return self.children[b]:insert(str:sub(2)) end
 end
 
---- Removes a string from the trie.
+--- Removes a string from the trie. (O(#str))
 ---@param str string The string to remove
 function Trie:remove(str)
     expect(1, str, "string")
@@ -34,7 +34,7 @@ function Trie:remove(str)
     end
 end
 
---- Returns whether the specified string is in the trie.
+--- Returns whether the specified string is in the trie. (O(#str))
 ---@param str string The string to search for
 ---@return boolean found Whether the string was found
 function Trie:find(str)
@@ -45,7 +45,7 @@ function Trie:find(str)
     return self.children[b]:find(str:sub(2))
 end
 
---- Returns all completions for the specified prefix string.
+--- Returns all completions for the specified prefix string. (O(n))
 ---@param str? string The string to complete; defaults to "", or all strings in the trie
 ---@return string[] completions The possible completion suffixes
 function Trie:complete(str)

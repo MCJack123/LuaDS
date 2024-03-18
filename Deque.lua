@@ -8,7 +8,7 @@ local expect = require "expect"
 local Deque = {}
 Deque.__mt = {__name = "Deque"}
 
---- Creates a new Deque.
+--- Creates a new Deque. (O(1) or O(n))
 ---@overload fun(): Deque
 ---@overload fun(arr: table): Deque
 ---@overload fun(val: any, count: number): Deque
@@ -26,38 +26,38 @@ function Deque:new(arr, count)
     return setmetatable({_items = arr or {}, _n = count or (arr and #arr or 0), _start = 0}, self.__mt)
 end
 
---- Returns whether the list is empty.
+--- Returns whether the list is empty. (O(1))
 ---@return boolean empty Whether the list is empty
 function Deque:isEmpty()
     return self._n == 0
 end
 
---- Returns the number of items in the list.
+--- Returns the number of items in the list. (O(1))
 ---@return number length The number of items in the list
 function Deque:length()
     return self._n
 end
 
---- Returns the item at the front of the list, or nil if the list is empty.
+--- Returns the item at the front of the list, or nil if the list is empty. (O(1))
 ---@return any front The front item
 function Deque:front()
     return self._items[self._start+1]
 end
 
---- Returns the item at the back of the list, or nil if the list is empty.
+--- Returns the item at the back of the list, or nil if the list is empty. (O(1))
 ---@return any back The back item
 function Deque:back()
     return self._items[self._start+self._n]
 end
 
---- Appends an item at the back of the list.
+--- Appends an item at the back of the list. (O(1))
 ---@param val any The value to add
 function Deque:append(val)
     self._n = self._n + 1
     self._items[self._start+self._n] = val
 end
 
---- Removes the item at the back of the list, returning the value. Returns nil and does nothing if the list is empty.
+--- Removes the item at the back of the list, returning the value. Returns nil and does nothing if the list is empty. (O(1))
 ---@return any|nil back The back item which was removed
 function Deque:pop()
     if self._n == 0 then return nil end
@@ -67,7 +67,7 @@ function Deque:pop()
     return v
 end
 
---- Inserts an item into the list at the specified position.
+--- Inserts an item into the list at the specified position. (O(n))
 ---@param val any The value to insert
 ---@param idx number The index to insert to; 1 <= idx <= list.n + 1
 function Deque:insert(val, idx)
@@ -90,7 +90,7 @@ function Deque:insert(val, idx)
     self._n = self._n + 1
 end
 
---- Removes an item at the specified position.
+--- Removes an item at the specified position. (O(n))
 ---@param idx number The index to remove at; 1 <= idx <= list.n
 ---@return any item The value removed
 function Deque:remove(idx)
@@ -114,7 +114,7 @@ function Deque:remove(idx)
     return v
 end
 
---- Returns the first index of the specified item, or nil if not present in the list.
+--- Returns the first index of the specified item, or nil if not present in the list. (O(n))
 ---@param val any The value to look for
 ---@return number|nil index The index of the item, or nil if not present
 function Deque:find(val)
@@ -126,7 +126,7 @@ function Deque:find(val)
     return nil
 end
 
---- Removes a number of instances of the specified item from the list.
+--- Removes a number of instances of the specified item from the list. (O(n))
 ---@param val any The value to remove
 ---@param count? number The number of items to remove (defaults to all)
 ---@return number itemsRemoved The number of items removed
@@ -148,7 +148,7 @@ function Deque:removeItem(val, count)
     return n
 end
 
---- Returns a new Deque with only elements that match a predicate function.
+--- Returns a new Deque with only elements that match a predicate function. (O(n))
 ---@param fn fun(any):boolean A function to be called on each item; returns whether the item should be included
 ---@return Deque filteredList The new filtered list
 function Deque:filter(fn)
@@ -162,7 +162,7 @@ function Deque:filter(fn)
     return retval
 end
 
---- Returns a new Deque where each item has been transformed by a function.
+--- Returns a new Deque where each item has been transformed by a function. (O(n))
 ---@param fn fun(any):any A function to be called on each item; returns a new item
 ---@return Deque mappedList The new mapped list
 function Deque:map(fn)
@@ -174,7 +174,7 @@ function Deque:map(fn)
     return Deque:new(retval)
 end
 
---- Returns a new Deque where each item has been transformed by a function; if the function returns nil, the item will not be included.
+--- Returns a new Deque where each item has been transformed by a function; if the function returns nil, the item will not be included. (O(n))
 ---@param fn fun(any):any|nil A function to be called on each item; returns the new item, or nil to remove
 ---@return Deque mappedList The new mapped list
 function Deque:compactMap(fn)
@@ -196,7 +196,7 @@ local function DQnext(self, i)
     end
 end
 
---- Returns an iterator function for a for loop.
+--- Returns an iterator function for a for loop. (O(1))
 ---@return fun(Deque,number):number|nil,any _ The iterator function
 ---@return Deque self
 ---@return number 0
@@ -204,7 +204,7 @@ function Deque:enumerate()
     return DQnext, self, 0
 end
 
---- Returns an array with the elements in the list.
+--- Returns an array with the elements in the list. (O(n))
 ---@return any[] items The items in the list as an array
 function Deque:array()
     local t = {}
