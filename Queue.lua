@@ -2,6 +2,7 @@ local expect = require "expect"
 
 ---@class Queue
 ---@field private _list List
+---@operator len: number
 local Queue = {}
 Queue.__mt = {__name = "Queue", __index = Queue}
 

@@ -7,6 +7,7 @@ local expect = require "expect"
 ---@field left BST|nil The left subtree.
 ---@field right BST|nil The right subtree.
 ---@field parent BST|nil The parent tree.
+---@operator len: number
 local BST = {}
 BST.__mt = {__name = "BST", __index = BST}
 

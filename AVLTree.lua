@@ -2,6 +2,7 @@ local expect = require "expect"
 local BST = require "BST"
 
 ---@class AVLTree: BST
+---@operator len: number
 local AVLTree = setmetatable({}, {__index = BST})
 AVLTree.__mt = {__name = "AVLTree", __index = AVLTree}
 

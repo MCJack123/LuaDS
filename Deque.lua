@@ -4,7 +4,7 @@ local expect = require "expect"
 ---@field private _n number
 ---@field private _start number
 ---@operator concat(Deque):Deque
----@operator len():number
+---@operator len:number
 local Deque = {}
 Deque.__mt = {__name = "Deque"}
 

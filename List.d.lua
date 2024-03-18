@@ -2,7 +2,7 @@
 
 ---@class List: ListType
 ---@operator concat(List):List
----@operator len():number
+---@operator len:number
 local List = {}
 
 --- Creates a new List.

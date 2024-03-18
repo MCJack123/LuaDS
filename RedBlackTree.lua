@@ -6,6 +6,7 @@ local BST = require "BST"
 ---@field right RedBlackTree|nil
 ---@field parent RedBlackTree|nil
 ---@field red boolean
+---@operator len: number
 local RedBlackTree = setmetatable({}, {__index = BST})
 RedBlackTree.__mt = {__name = "RedBlackTree", __index = RedBlackTree}
 

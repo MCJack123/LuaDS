@@ -3,7 +3,7 @@ local expect = require "expect"
 ---@class ArrayList: List
 ---@field private _n number
 ---@operator concat(ArrayList):ArrayList
----@operator len():number
+---@operator len:number
 local ArrayList = {}
 ArrayList.__mt = {__name = "ArrayList", __index = ArrayList}
 

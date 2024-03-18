@@ -10,7 +10,7 @@ local expect = require "expect"
 ---@field private _head LLNode
 ---@field private _tail LLNode
 ---@operator concat(LinkedList):LinkedList
----@operator len():number
+---@operator len:number
 local LinkedList = {}
 LinkedList.__mt = {__name = "LinkedList"}
 

@@ -1,10 +1,11 @@
 local expect = require "expect"
 local RedBlackTree = require "RedBlackTree"
 
----@class Map A key-value map which maintains key order.
+---@class OrderedMap: Map A key-value map which maintains key order.
 ---@field private _tree RedBlackTree
-local Map = {}
-Map.__mt = {__name = "Map"}
+---@operator len: number
+local OrderedMap = {}
+OrderedMap.__mt = {__name = "OrderedMap"}
 
 ---@class KeyValuePair
 ---@field key Comparable
@@ -17,8 +18,8 @@ function KeyValuePair_mt.__le(a, b) return a.key <= b.key end
 
 --- Creates a new map.
 ---@param tab? table A table of values to prefill the map with
----@return Map map The new map
-function Map:new(tab)
+---@return OrderedMap map The new map
+function OrderedMap:new(tab)
     expect(1, tab, "table", "nil")
     local obj = setmetatable({_tree = RedBlackTree:new()}, self.__mt)
     if tab then
@@ -31,20 +32,20 @@ end
 
 --- Returns whether the map is empty.
 ---@return boolean empty Whether the map is empty
-function Map:isEmpty()
+function OrderedMap:isEmpty()
     return self._tree:isEmpty()
 end
 
 --- Returns the number of items in the map.
 ---@return number length The number of items in the map
-function Map:length()
+function OrderedMap:length()
     return self._tree:length()
 end
 
 --- Returns the value associated with a given key, or nil if not found.
 ---@param key Comparable The key to check
 ---@return any|nil value The value associated with the key
-function Map:get(key)
+function OrderedMap:get(key)
     local v = self._tree:find(KeyValuePair(key, nil))
     if v then return v.value end
 end
@@ -52,7 +53,7 @@ end
 --- Assigns a key to a value, inserting it if it doesn't exist, or replacing the value if it does.
 ---@param key Comparable The key to assign to
 ---@param value any The value to assign
-function Map:set(key, value)
+function OrderedMap:set(key, value)
     if value == nil then self._tree:remove(KeyValuePair(key, value))
     else self._tree:insert(KeyValuePair(key, value)) end
 end
@@ -60,13 +61,13 @@ end
 --- Returns whether a given key exists in the map
 ---@param key Comparable The key to check
 ---@return boolean found Whether the key exists
-function Map:find(key)
+function OrderedMap:find(key)
     return self._tree:find(KeyValuePair(key, nil)) ~= nil
 end
 
 --- Returns a key-value iterator function for a for loop.
 ---@return fun():Comparable|nil,any|nil iter The iterator function
-function Map:enumerate()
+function OrderedMap:enumerate()
     local fn, state, i = self._tree:enumerate()
     return function()
         local v
@@ -76,28 +77,44 @@ function Map:enumerate()
 end
 
 --- Returns a normal table with the contents of the map.
----@return table A table with the contents of the map
-function Map:table()
+---@return table table A table with the contents of the map
+function OrderedMap:table()
     local t = {}
     for k, v in self:enumerate() do t[k] = v end
     return t
 end
 
-function Map.__mt:__index(key)
-    if Map[key] then return Map[key] end
+--- Returns a list (optionally of a List type) with pairs of key-value entries.
+---@param List? ListType The type of list to make (defaults to a normal table)
+---@return table<{key:any,value:any}>|List pairs A list of key-value pairs in the table
+function OrderedMap:pairs(List)
+    if List then
+        expect(1, List, "table")
+        local retval = List:new()
+        for k, v in self:enumerate() do retval:append({key = k, value = v}) end
+        return retval
+    else
+        local retval = {}
+        for k, v in self:enumerate() do retval[#retval+1] = {key = k, value = v} end
+        return retval
+    end
+end
+
+function OrderedMap.__mt:__index(key)
+    if OrderedMap[key] then return OrderedMap[key] end
     return self:get(key)
 end
 
-function Map.__mt:__len()
+function OrderedMap.__mt:__len()
     return self._tree:length()
 end
 
-function Map.__mt:__newindex(key, val)
+function OrderedMap.__mt:__newindex(key, val)
     return self:set(key, val)
 end
 
-function Map.__mt:__pairs()
+function OrderedMap.__mt:__pairs()
     return self:enumerate()
 end
 
-return Map
+return OrderedMap

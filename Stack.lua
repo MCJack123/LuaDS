@@ -2,6 +2,7 @@ local expect = require "expect"
 
 ---@class Stack
 ---@field private _list List
+---@operator len: number
 local Stack = {}
 Stack.__mt = {__name = "Stack", __index = Stack}
 
