@@ -3,6 +3,7 @@ local expect = require "expect"
 ---@class Trie
 ---@field character string|nil
 ---@field children table<number,Trie>
+---@field value any|nil
 local Trie = {}
 Trie.__mt = {__name = "Trie", __index = Trie}
 
@@ -16,11 +17,13 @@ end
 
 --- Inserts a string into the trie. (O(#str))
 ---@param str string The string to add
-function Trie:insert(str)
+---@param v? any A value to store in the final node
+function Trie:insert(str, v)
     expect(1, str, "string")
     local b = str:byte(1)
     if not self.children[b or -1] then self.children[b or -1] = Trie:new(b and string.char(b) or "") end
-    if b then return self.children[b]:insert(str:sub(2)) end
+    if b then return self.children[b]:insert(str:sub(2), v)
+    else self.children[-1].value = v end
 end
 
 --- Removes a string from the trie. (O(#str))
@@ -37,10 +40,11 @@ end
 --- Returns whether the specified string is in the trie. (O(#str))
 ---@param str string The string to search for
 ---@return boolean found Whether the string was found
+---@return any|nil value The value associated with the key
 function Trie:find(str)
     expect(1, str, "string")
     local b = str:byte(1) or -1
-    if self.character == "" and b == -1 then return true end
+    if self.character == "" and b == -1 then return true, self.value end
     if not self.children[b] then return false end
     return self.children[b]:find(str:sub(2))
 end
