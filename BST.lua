@@ -126,12 +126,19 @@ function BST:enumerate()
     return coroutine.wrap(function() BSTiter(self, 0) return nil end)
 end
 
---- Returns an array with the elements in the tree. (O(n))
----@return any[] items The items in the tree as an array
-function BST:array()
-    local t = {}
-    for i, v in self:enumerate() do t[i] = v end
-    return t
+--- Returns an array or List type with the elements in the tree. (O(n))
+---@param List? ListType If provided, a list type to return
+---@return any[]|List items The items in the tree as an array or List
+function BST:array(List)
+    if List then
+        local t = List:new()
+        for _, v in self:enumerate() do t:append(v) end
+        return t
+    else
+        local t = {}
+        for i, v in self:enumerate() do t[i] = v end
+        return t
+    end
 end
 
 function BST.__mt:__len()

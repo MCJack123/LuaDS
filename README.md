@@ -8,9 +8,14 @@ A collection of data structures written in Lua.
   - `Deque` - list backed by a moving-start array/hashmap
 - `Map` (virtual) - key-value mapped container
   - `OrderedMap` - map backed by a red-black tree, iterator sorts keys in order
-  - `ListMap` - map backed by two tables (one for key->order, one for order->value), iterator sorts by when items were added
+  - `ListMap` - map backed by three tables (one for key->order, one for order->value, one for order->key), iterator sorts by when items were added
   - `UnorderedMap` - map backed by a hashmap table, iterator is unsorted
   - `TrieMap` - map backed by a trie, iterator sorts keys alphabetically
+- `Set` (virtual) - non-repeating value container with set operations
+  - `OrderedSet` - set backed by a red-black tree, iterator sorts values in order
+  - `ListSet` - set backed by two tables (one for key->order, one for order->key), iterator sorts by when values were added
+  - `UnorderedSet` - set backed by a table, iterator is unsorted
+  - `TrieSet` - set backed by a trie, iterator sorts values alphabetically
 - `BST` - binary search tree
   - `AVLTree` - self-balancing AVL BST
   - `RedBlackTree` - self-balancing red-black tree

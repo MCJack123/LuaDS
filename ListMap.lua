@@ -10,7 +10,7 @@ local expect = require "expect"
 local ListMap = {}
 ListMap.__mt = {__name = "ListMap"}
 
---- Creates a new list map. (O(1))
+--- Creates a new list map. (O(1) or O(n))
 ---@param tab? table A table of values to prefill the map with
 ---@return ListMap map The new map
 function ListMap:new(tab)

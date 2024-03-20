@@ -15,6 +15,12 @@ function Trie:new(c)
     return setmetatable({character = c, children = {}}, self.__mt)
 end
 
+--- Returns whether the trie is empty.
+---@return boolean empty Whether the trie is empty
+function Trie:isEmpty()
+    return #self.children == 0
+end
+
 --- Inserts a string into the trie. (O(#str))
 ---@param str string The string to add
 ---@param v? any A value to store in the final node
