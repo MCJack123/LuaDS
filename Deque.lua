@@ -189,6 +189,15 @@ function Deque:compactMap(fn)
     return retval
 end
 
+--- Returns a new Deque that contains the items sorted according to < or a sorting function.
+---@param fn? fun(any, any):boolean A function to use to compare items (defaults to a < b)
+---@return Deque sortedList The new sorted list
+function Deque:sorted(fn)
+    local retval = self:new(self:array())
+    table.sort(retval, fn)
+    return retval
+end
+
 local function DQnext(self, i)
     i = i + 1
     if i <= self._n then

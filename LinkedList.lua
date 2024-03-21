@@ -240,6 +240,15 @@ function LinkedList:compactMap(fn)
     return retval
 end
 
+--- Returns a new LinkedList that contains the items sorted according to < or a sorting function.
+---@param fn? fun(any, any):boolean A function to use to compare items (defaults to a < b)
+---@return LinkedList sortedList The new sorted list
+function LinkedList:sorted(fn)
+    local retval = self:array()
+    table.sort(retval, fn)
+    return self:new(retval)
+end
+
 local function LLnext(state, i)
     if state.node ~= nil then
         local node = state.node
@@ -289,6 +298,7 @@ end
 
 function LinkedList.__mt:__index(idx)
     if LinkedList[idx] then return LinkedList[idx] end
+    if idx == "_head" or idx == "_tail" then return nil end
     expect(1, idx, "number")
     idx = math.floor(idx)
     if idx < 1 or idx > self._n then return nil end

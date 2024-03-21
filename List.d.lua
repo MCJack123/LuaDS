@@ -1,5 +1,6 @@
 ---@meta
 
+---@
 ---@class List: ListType
 ---@operator concat(List):List
 ---@operator len:number
@@ -70,6 +71,11 @@ function List:map(fn) end
 ---@param fn fun(any):any|nil A function to be called on each item; returns the new item, or nil to remove
 ---@return List mappedList The new mapped list
 function List:compactMap(fn) end
+
+--- Returns a new List that contains the items sorted according to < or a sorting function.
+---@param fn? fun(any, any):boolean A function to use to compare items (defaults to a < b)
+---@return List sortedList The new sorted list
+function List:sorted(fn) end
 
 --- Returns an iterator function for a for loop.
 ---@return fun(List,number):number|nil,any _ The iterator function

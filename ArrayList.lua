@@ -176,6 +176,15 @@ function ArrayList:compactMap(fn)
     return retval
 end
 
+--- Returns a new ArrayList that contains the items sorted according to < or a sorting function.
+---@param fn? fun(any, any):boolean A function to use to compare items (defaults to a < b)
+---@return ArrayList sortedList The new sorted list
+function ArrayList:sorted(fn)
+    local retval = self:new(self:array())
+    table.sort(retval, fn)
+    return retval
+end
+
 local function ALnext(self, i)
     i = i + 1
     if i <= self._n then
