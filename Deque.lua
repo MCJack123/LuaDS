@@ -67,6 +67,24 @@ function Deque:pop()
     return v
 end
 
+--- Appends an item at the front of the list. (O(1))
+---@param val any The value to add
+function Deque:unshift(val)
+    self._n = self._n + 1
+    self._start = self._start - 1
+    self._items[self._start+1] = val
+end
+
+--- Removes the item at the front of the list, returning the value. Returns nil and does nothing if the list is empty. (O(1))
+---@return any|nil front The front item which was removed
+function Deque:shift()
+    if self._n == 0 then return nil end
+    local v = self._items[self._start+1]
+    self._items[self._start+1] = nil
+    self._start = self._start + 1
+    return v
+end
+
 --- Inserts an item into the list at the specified position. (O(n))
 ---@param val any The value to insert
 ---@param idx number The index to insert to; 1 <= idx <= list.n + 1
